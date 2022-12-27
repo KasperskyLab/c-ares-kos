@@ -1,12 +1,10 @@
-c-ares
-======
+# C-ares adaptation for KasperskyOS
 
-[![Build Status](https://travis-ci.org/c-ares/c-ares.svg?branch=master)](https://travis-ci.org/c-ares/c-ares)
-[![Windows Build Status](https://ci.appveyor.com/api/projects/status/aevgc5914tm72pvs/branch/master?svg=true)](https://ci.appveyor.com/project/c-ares/c-ares/branch/master)
-[![Coverage Status](https://coveralls.io/repos/c-ares/c-ares/badge.svg?branch=master&service=github)](https://coveralls.io/github/c-ares/c-ares?branch=master)
-[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/291/badge)](https://bestpractices.coreinfrastructure.org/projects/291)
-[![Fuzzing Status](https://oss-fuzz-build-logs.storage.googleapis.com/badges/c-ares.svg)](https://bugs.chromium.org/p/oss-fuzz/issues/list?sort=-opened&can=1&q=proj:c-ares)
-[![Releases](https://coderelease.io/badge/c-ares/c-ares)](https://coderelease.io/github/repository/c-ares/c-ares)
+This is a fork of [c-ares](http://github.com/c-ares/c-ares) project adapted to be used with KasperskyOS. For more information about the target OS, please refer to [KaspeksyOS Community Edition](https://support.kaspersky.com/help/KCE/1.1/en-US/community_edition.htm).
+
+For general information on using c-ares, its features and so on, please see the [c-ares website](https://c-ares.org/).
+
+## About C-ares
 
 This is c-ares, an asynchronous resolver library.  It is intended for
 applications which need to perform DNS queries without blocking, or need to
@@ -15,22 +13,27 @@ applications are servers which communicate with multiple clients and programs
 with graphical user interfaces.
 
 The full source code is available in the ['c-ares' release archives](https://c-ares.haxx.se/download/),
-and in a git repository: http://github.com/c-ares/c-ares.  See the
-[INSTALL.md](INSTALL.md) file for build information.
+and in a git repository: http://github.com/c-ares/c-ares.
+
+## Building C-ares
+
+For a default build and use, you need to install the KasperskyOS Community Edition SDK on your system. The latest version of the SDK can be downloaded from this [link](https://os.kaspersky.com/development/). The Abseil source code has been checked on the KasperskyOS Community Edition SDK version 1.1.0.
+
+See the [INSTALL.md](INSTALL.md) file for build information.
+
+## Contributing
 
 If you find bugs, correct flaws, have questions or have comments in general in
 regard to c-ares (or by all means the original ares too), get in touch with us
-on the c-ares mailing list: http://cool.haxx.se/mailman/listinfo/c-ares
+on the c-ares mailing list: http://cool.haxx.se/mailman/listinfo/c-ares.
 
-c-ares is of course distributed under the same MIT-style license as the
-original ares.
+We'll follow the parent project contributing rules but would consider to accept only KasperskyOS-specific changes, so for that it is advised to use pull-requests.
 
-You'll find all c-ares details and news here:
-        https://c-ares.haxx.se/
+## License
 
+The c-ares library is licensed under the terms of the MIT License. See [LICENSE](LICENSE) for more information.
 
-Notes for c-ares hackers
-------------------------
+## Notes for c-ares hackers
 
 * The distributed `ares_build.h` file is only intended to be used on systems
   which can not run the also distributed configure script.
@@ -62,6 +65,6 @@ Notes for c-ares hackers
 
 * Newlines must remain unix-style for older compilers' sake.
 
-* Comments must be written in the old-style /* unnested C-fashion */
+* Comments must be written in the old-style /* unnested C-fashion */.
 
 * Try to keep line lengths below 80 columns.
