@@ -1,0 +1,60 @@
+# © 2024 AO Kaspersky Lab
+# Licensed under the MIT License
+
+entities:
+
+- name: example.Client
+  task: example.Client1
+  args:
+    - "dns.google"
+    - "www.google.com"
+  connections:
+  - target: example.NameResolver
+    id: name_resolver
+@INIT_Client_ENTITY_CONNECTIONS+@
+
+- name: example.Client
+  task: example.Client2
+  args:
+    - "linux.org"
+    - "yandex.com"
+  connections:
+  - target: example.NameResolver
+    id: name_resolver
+@INIT_Client_ENTITY_CONNECTIONS+@
+
+- name: example.Client
+  task: example.Client3
+  args:
+    - "os.kaspersky.com"
+    - "cppreference.com"
+    - "isocpp.org"
+    - "localhost"
+  connections:
+  - target: example.NameResolver
+    id: name_resolver
+@INIT_Client_ENTITY_CONNECTIONS+@
+
+- name: example.Client
+  task: example.Client4
+  args:
+    - "kaspersky.com"
+    - "rust-lang.org"
+    - "some.not.exists.hosthame.neverland"
+  connections:
+  - target: example.NameResolver
+    id: name_resolver
+@INIT_Client_ENTITY_CONNECTIONS+@
+
+- name: example.NameResolver
+  env:
+    VFS_FILESYSTEM_BACKEND: client:kl.VfsSdCardFs
+    VFS_NETWORK_BACKEND: client:kl.VfsNet
+  connections:
+  - target: kl.VfsNet
+    id: kl.VfsNet
+  - target: kl.VfsSdCardFs
+    id: kl.VfsSdCardFs
+@INIT_NameResolver_ENTITY_CONNECTIONS+@
+
+@INIT_EXTERNAL_ENTITIES@

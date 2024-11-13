@@ -14,7 +14,7 @@
  * this software for any purpose.  It is provided "as is"
  * without express or implied warranty.
  *
- * © 2022 AO Kaspersky Lab. All Rights Reserved
+ * © 2023 AO Kaspersky Lab
  *
  */
 
@@ -42,7 +42,7 @@
 #if defined(_AIX) || defined(__NOVELL_LIBC__) || defined(__NetBSD__) || \
     defined(__minix) || defined(__SYMBIAN32__) || defined(__INTEGRITY) || \
     defined(ANDROID) || defined(__ANDROID__) || defined(__OpenBSD__) || \
-    defined(__QNXNTO__) || defined(__MVS__) || defined(__KOS__) // 03.11.2022 adapted for KasperskyOS
+    defined(__QNXNTO__) || defined(__MVS__) || defined(__KOS__)
 #include <sys/select.h>
 #endif
 #if (defined(NETWARE) && !defined(__NOVELL_LIBC__))

@@ -1,3 +1,8 @@
+/*
+ * © 2024 AO Kaspersky Lab
+ * Licensed under the MIT License
+ */
+
 #include "ares-test.h"
 #include "dns-proto.h"
 
@@ -1024,11 +1029,26 @@ TEST_P(MockChannelTest, HostAliasMissingFile) {
 
 TEST_P(MockChannelTest, HostAliasUnreadable) {
   TempFile aliases("www www.google.com\n");
-  chmod(aliases.filename(), 0);
+  EXPECT_EQ(chmod(aliases.filename(), 0), 0);
+
+  /* Perform OS sanity checks.  We are observing on Debian after the chmod(fn, 0)
+   * that we are still able to fopen() the file which is unexpected.  Skip the
+   * test if we observe this behavior */
+  struct stat st;
+  EXPECT_EQ(stat(aliases.filename(), &st), 0);
+  EXPECT_EQ(st.st_mode & (S_IRWXU|S_IRWXG|S_IRWXO), 0);
+  FILE *fp = fopen(aliases.filename(), "r");
+  if (fp != NULL) {
+    if (verbose) std::cerr << "Skipping Test due to OS incompatibility (open file caching)" << std::endl;
+    fclose(fp);
+    return;
+  }
+
   EnvValue with_env("HOSTALIASES", aliases.filename());
 
   HostResult result;
   ares_gethostbyname(channel_, "www", AF_INET, HostCallback, &result);
+  Process();
   EXPECT_TRUE(result.done_);
   EXPECT_EQ(ARES_EFILE, result.status_);
   chmod(aliases.filename(), 0777);

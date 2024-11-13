@@ -1,3 +1,8 @@
+/*
+ * © 2024 AO Kaspersky Lab
+ * Licensed under the MIT License
+ */
+
 #include "ares-test-ai.h"
 #include "dns-proto.h"
 
