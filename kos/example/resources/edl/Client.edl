@@ -1,0 +1,11 @@
+/*
+ * © 2024 AO Kaspersky Lab
+ * Licensed under the MIT License
+ */
+
+task class example.Client
+
+endpoints
+{
+    onResolve: example.ResolveCallback
+}

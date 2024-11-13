@@ -1,9 +1,19 @@
+/*
+ * © 2024 AO Kaspersky Lab
+ * Licensed under the MIT License
+ */
+
 #include <signal.h>
 #include <stdlib.h>
 
 #include "ares-test.h"
 
+#ifdef __KOS__
+#include <kos/test/bootstrap.h>
+#endif
+
 int main(int argc, char* argv[]) {
+
   std::vector<char*> gtest_argv = {argv[0]};
   for (int ii = 1; ii < argc; ii++) {
     if (strcmp(argv[ii], "-v") == 0) {
@@ -24,6 +34,10 @@ int main(int argc, char* argv[]) {
   int gtest_argc = gtest_argv.size();
   gtest_argv.push_back(nullptr);
   ::testing::InitGoogleTest(&gtest_argc, gtest_argv.data());
+
+#ifdef __KOS__
+    kos::test::bootstrap();
+#endif
 
 #ifdef WIN32
   WORD wVersionRequested = MAKEWORD(2, 2);

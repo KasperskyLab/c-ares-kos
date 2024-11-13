@@ -255,6 +255,11 @@ ninja
 sudo ninja install
 ```
 
+KasperskyOS
+-----------
+
+Instructions on how to build and run tests, along with a usage example, can be found in the files [README.md](README.md) and [./kos/example/README.md](kos/example/README.md).
+
 Windows MSVC Command Line
 -------------------------
 
@@ -407,3 +412,5 @@ Useful URLs
  - MingW: http://www.mingw.org/
  - MinGW-w64: http://mingw-w64.sourceforge.net/
  - OpenWatcom: http://www.openwatcom.org/
+
+© 2023 AO Kaspersky Lab

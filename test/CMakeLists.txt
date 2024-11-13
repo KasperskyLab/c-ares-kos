@@ -1,3 +1,6 @@
+# © 2024 AO Kaspersky Lab
+# Licensed under the MIT License
+
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 set(CMAKE_CXX_EXTENSIONS FALSE)
@@ -41,37 +44,50 @@ include(${CMAKE_CURRENT_BINARY_DIR}/Makefile.inc.cmake)
 
 configure_file(${CARES_TOPLEVEL_DIR}/src/lib/ares_config.h.cmake config.h)
 
-add_executable(arestest ${TESTSOURCES} ${TESTHEADERS})
-target_include_directories(arestest PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
-target_link_libraries(arestest PRIVATE caresinternal gmock)
+IF (KOS)
+    include(${CARES_TOPLEVEL_DIR}/kos/cmake/unit_test.cmake)
+    add_unit_test(CAresTestst
+      SOURCES ${TESTSOURCES} ${TESTHEADERS}
+      INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}
+      LIBS caresinternal
+      WITH_NETWORK ON
+    )
+ELSE ()
 
-IF (CARES_BUILD_CONTAINER_TESTS)
-  target_compile_definitions(arestest PRIVATE HAVE_USER_NAMESPACE HAVE_UTS_NAMESPACE)
-ENDIF ()
+    add_executable(arestest ${TESTSOURCES} ${TESTHEADERS})
 
-add_executable(aresfuzz ${FUZZSOURCES})
-target_link_libraries(aresfuzz PRIVATE caresinternal)
+    target_include_directories(arestest PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+    target_link_libraries(arestest PRIVATE caresinternal gmock)
 
-add_executable(aresfuzzname ${FUZZNAMESOURCES})
-target_link_libraries(aresfuzzname PRIVATE caresinternal)
+    IF (CARES_BUILD_CONTAINER_TESTS)
+      target_compile_definitions(arestest PRIVATE HAVE_USER_NAMESPACE HAVE_UTS_NAMESPACE)
+    ENDIF ()
 
-add_executable(dnsdump ${DUMPSOURCES})
-target_link_libraries(dnsdump PRIVATE caresinternal)
+    add_executable(aresfuzz ${FUZZSOURCES})
+    target_link_libraries(aresfuzz PRIVATE caresinternal)
 
-# register tests
+    add_executable(aresfuzzname ${FUZZNAMESOURCES})
+    target_link_libraries(aresfuzzname PRIVATE caresinternal)
 
-add_test(NAME arestest COMMAND $<TARGET_FILE:arestest>)
+    add_executable(dnsdump ${DUMPSOURCES})
+    target_link_libraries(dnsdump PRIVATE caresinternal)
 
-file(GLOB_RECURSE FUZZINPUT_FILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/fuzzinput" "fuzzinput/*")
-add_test(
-  NAME aresfuzz
-  WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/fuzzinput"
-  COMMAND $<TARGET_FILE:aresfuzz> ${FUZZINPUT_FILES}
-)
+    # register tests
 
-file(GLOB_RECURSE FUZZNAMES_FILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/fuzznames" "fuzznames/*")
-add_test(
-  NAME aresfuzzname
-  WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/fuzznames"
-  COMMAND $<TARGET_FILE:aresfuzzname> ${FUZZNAMES_FILES}
-)
+    add_test(NAME arestest COMMAND $<TARGET_FILE:arestest>)
+
+    file(GLOB_RECURSE FUZZINPUT_FILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/fuzzinput" "fuzzinput/*")
+    add_test(
+      NAME aresfuzz
+      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/fuzzinput"
+      COMMAND $<TARGET_FILE:aresfuzz> ${FUZZINPUT_FILES}
+    )
+
+    file(GLOB_RECURSE FUZZNAMES_FILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/fuzznames" "fuzznames/*")
+    add_test(
+      NAME aresfuzzname
+      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/fuzznames"
+      COMMAND $<TARGET_FILE:aresfuzzname> ${FUZZNAMES_FILES}
+    )
+
+ENDIF (KOS)

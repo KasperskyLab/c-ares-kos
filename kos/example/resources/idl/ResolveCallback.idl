@@ -1,0 +1,11 @@
+/*
+ * © 2024 AO Kaspersky Lab
+ * Licensed under the MIT License
+ */
+
+package example.ResolveCallback
+
+interface
+{
+    OnResolve(in string<128> name, in string<128> address);
+}

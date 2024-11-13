@@ -1,0 +1,11 @@
+/*
+ * © 2024 AO Kaspersky Lab
+ * Licensed under the MIT License
+ */
+
+task class example.NameResolver
+
+endpoints
+{
+    resolver: example.Resolver
+}

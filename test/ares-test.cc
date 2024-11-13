@@ -1,3 +1,9 @@
+/*
+ * © 2024 AO Kaspersky Lab
+ * Licensed under the MIT License
+ */
+
+
 #include "ares_setup.h"
 #include "ares.h"
 #include "ares_nameser.h"
@@ -779,6 +785,15 @@ TransientFile::TransientFile(const std::string& filename,
 TransientFile::~TransientFile() {
   unlink(filename_.c_str());
 }
+
+#ifdef __KOS__
+static char* tempnam(const char*, const char*)
+{
+    char* name = (char*)calloc(L_tmpnam, sizeof(char));
+    tmpnam(name);
+    return name;
+}
+#endif
 
 std::string TempNam(const char *dir, const char *prefix) {
   char *p = tempnam(dir, prefix);

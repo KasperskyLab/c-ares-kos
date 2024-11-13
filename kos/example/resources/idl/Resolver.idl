@@ -1,0 +1,11 @@
+/*
+ * © 2024 AO Kaspersky Lab
+ * Licensed under the MIT License
+ */
+
+package example.Resolver
+
+interface
+{
+    Resolve(in string<256> name, in Handle onResolve);
+}

@@ -150,4 +150,3 @@ persistent mode, where multiple fuzz inputs are run for each process invocation.
    % mkdir fuzzoutput
    % $AFLDIR/afl-fuzz -i fuzzinput -o fuzzoutput -- ./aresfuzz
    ```
-
