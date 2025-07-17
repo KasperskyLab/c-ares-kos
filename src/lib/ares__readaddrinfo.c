@@ -11,6 +11,9 @@
  * M.I.T. makes no representations about the suitability of
  * this software for any purpose.  It is provided "as is"
  * without express or implied warranty.
+ *
+ * © 2024 AO Kaspersky Lab
+ * Licensed under the MIT License
  */
 
 #include "ares_setup.h"
@@ -29,6 +32,7 @@
 #include "ares_inet_net_pton.h"
 #include "ares_nowarn.h"
 #include "ares_private.h"
+#include <strings.h>
 
 #define MAX_ALIASES 40
 

@@ -14,6 +14,10 @@
  * M.I.T. makes no representations about the suitability of
  * this software for any purpose.  It is provided "as is"
  * without express or implied warranty.
+ *
+ * © 2025 AO Kaspersky Lab
+ * Licensed under the MIT License
+ *
  */
 
 #include "ares_setup.h"
@@ -250,8 +254,13 @@ static unsigned short lookup_service(const char *service, int flags)
       sep =
           getservbyname_r(service, proto, &se, (void *)tmpbuf, sizeof(tmpbuf));
 #elif GETSERVBYNAME_R_ARGS == 4
+#ifdef __KOS__
+      /* KasperskyOS uses a NetBSD-like implementation */
+      sep = getservbyname_r(service, proto, &se, (void *)tmpbuf);
+#else
       if (getservbyname_r(service, proto, &se, (void *)tmpbuf) != 0)
         sep = NULL;
+#endif
 #else
       /* Lets just hope the OS uses TLS! */
       sep = getservbyname(service, proto);

@@ -16,6 +16,10 @@
  * M.I.T. makes no representations about the suitability of
  * this software for any purpose.  It is provided "as is"
  * without express or implied warranty.
+ *
+ * © 2025 AO Kaspersky Lab
+ * Licensed under the MIT License
+ *
  */
 
 /*
@@ -95,8 +99,6 @@ W32_FUNC const char *_w32_GetHostsFile (void);
 #endif
 
 #endif
-
-#define ARES_ID_KEY_LEN 31
 
 #include "ares_ipv6.h"
 #include "ares_llist.h"
@@ -257,12 +259,8 @@ struct apattern {
   unsigned short type;
 };
 
-typedef struct rc4_key
-{
-  unsigned char state[256];
-  unsigned char x;
-  unsigned char y;
-} rc4_key;
+struct ares_rand_state;
+typedef struct ares_rand_state ares_rand_state;
 
 struct ares_channeldata {
   /* Configuration data */
@@ -297,8 +295,8 @@ struct ares_channeldata {
 
   /* ID to use for next query */
   unsigned short next_id;
-  /* key to use when generating new ids */
-  rc4_key id_key;
+  /* random state to use when generating new ids */
+  ares_rand_state *rand_state;
 
   /* Generation number to use for the next TCP socket open/close */
   int tcp_connection_generation;
@@ -354,7 +352,10 @@ void ares__close_sockets(ares_channel channel, struct server_state *server);
 int ares__get_hostent(FILE *fp, int family, struct hostent **host);
 int ares__read_line(FILE *fp, char **buf, size_t *bufsize);
 void ares__free_query(struct query *query);
-unsigned short ares__generate_new_id(rc4_key* key);
+
+ares_rand_state *ares__init_rand_state(void);
+void ares__destroy_rand_state(ares_rand_state *state);
+unsigned short ares__generate_new_id(ares_rand_state *state);
 struct timeval ares__tvnow(void);
 int ares__expand_name_validated(const unsigned char *encoded,
                                 const unsigned char *abuf,

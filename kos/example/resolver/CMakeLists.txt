@@ -6,7 +6,7 @@ PROJECT (resolver)
 FIND_PACKAGE (c-ares REQUIRED)
 
 # Set the linker and compiler flags.
-project_header_default ("STANDARD_GNU_11:YES" "EXTRA_STRICT_WARNINGS:YES")
+project_header_default ("STANDARD_GNU_17:YES" "EXTRA_STRICT_WARNINGS:YES")
 
 add_nk_edl (NAME_RESOLVER_EDL
     "${RESOURCES}/edl/NameResolver.edl"

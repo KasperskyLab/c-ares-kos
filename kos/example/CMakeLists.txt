@@ -8,6 +8,15 @@ PROJECT (async_resolver_example)
 INCLUDE (platform)
 initialize_platform ()
 
+# Detect board.
+IF (CMAKE_SYSTEM_SOC STREQUAL "BCM2711")
+    SET (BOARD "RPI4_BCM2711")
+ELSEIF (CMAKE_SYSTEM_SOC STREQUAL "RK3568")
+    SET (BOARD "RADXA_ROCK_3A")
+ELSE ()
+    MESSAGE (FATAL_ERROR "Unsupported board for SoC '${CMAKE_SYSTEM_SOC}'")
+ENDIF ()
+
 # Include the CMake library named nk
 # for working with the NK compiler (nk-gen-c).
 INCLUDE (platform/nk)

@@ -1,5 +1,14 @@
 # Changelog
 
+## Release for KasperskyOS Community Edition SDK 1.3 - 2025-07
+
+### Changes
+
+* Added server vfs for tests
+* Updated STANDARD_GNU compiler flag to version 17
+* Added support for the Radxa ROCK 3A hardware platform
+* Fixed vulnerabilities
+
 ## Release for KasperskyOS Community Edition SDK 1.2 - 2024-12
 
 ### Changes
