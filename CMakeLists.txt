@@ -1,4 +1,4 @@
-# © 2024 AO Kaspersky Lab
+# © 2025 AO Kaspersky Lab
 # Licensed under the MIT License
 
 CMAKE_MINIMUM_REQUIRED (VERSION 3.1.0)
@@ -39,6 +39,8 @@ OPTION (CARES_STATIC_PIC "Build the static library as PIC (position independent)
 OPTION (CARES_BUILD_TESTS "Build and run tests"                                                  OFF)
 OPTION (CARES_BUILD_CONTAINER_TESTS "Build and run container tests (implies CARES_BUILD_TESTS, Linux only)" OFF)
 OPTION (CARES_BUILD_TOOLS "Build tools"                                                          ON)
+SET    (CARES_RANDOM_FILE "/dev/urandom" CACHE STRING "Suitable File / Device Path for entropy, such as /dev/urandom")
+
 
 # Tests require static to be enabled on Windows to be able to access otherwise hidden symbols
 IF (CARES_BUILD_TESTS AND (NOT CARES_STATIC) AND WIN32)
@@ -382,6 +384,8 @@ CHECK_SYMBOL_EXISTS (strncasecmp     "${CMAKE_EXTRA_INCLUDE_FILES}" HAVE_STRNCAS
 CHECK_SYMBOL_EXISTS (strncmpi        "${CMAKE_EXTRA_INCLUDE_FILES}" HAVE_STRNCMPI)
 CHECK_SYMBOL_EXISTS (strnicmp        "${CMAKE_EXTRA_INCLUDE_FILES}" HAVE_STRNICMP)
 CHECK_SYMBOL_EXISTS (writev          "${CMAKE_EXTRA_INCLUDE_FILES}" HAVE_WRITEV)
+CHECK_SYMBOL_EXISTS (arc4random_buf  "${CMAKE_EXTRA_INCLUDE_FILES}" HAVE_ARC4RANDOM_BUF)
+
 
 # On Android, the system headers may define __system_property_get(), but excluded
 # from libc.  We need to perform a link test instead of a header/symbol test.
@@ -391,10 +395,6 @@ CHECK_FUNCTION_EXISTS (__system_property_get HAVE___SYSTEM_PROPERTY_GET)
 SET (CMAKE_EXTRA_INCLUDE_FILES)
 SET (CMAKE_REQUIRED_DEFINITIONS)
 SET (CMAKE_REQUIRED_LIBRARIES)
-
-
-find_file(CARES_RANDOM_FILE urandom /dev)
-mark_as_advanced(CARES_RANDOM_FILE)
 
 
 ################################################################################
@@ -526,7 +526,8 @@ IF (HAVE_GETSERVBYPORT_R)
 	IF (CMAKE_SYSTEM_NAME STREQUAL "SunOS")
 		SET (GETSERVBYPORT_R_ARGS 5)
 	ELSEIF (CMAKE_SYSTEM_NAME STREQUAL "AIX" OR
-		CMAKE_SYSTEM_NAME STREQUAL "OpenBSD")
+			CMAKE_SYSTEM_NAME STREQUAL "OpenBSD" OR
+			CMAKE_SYSTEM_NAME MATCHES  "KOS-GNU.*")
 		SET (GETSERVBYPORT_R_ARGS 4)
 	ELSE ()
 		# Probably linux
@@ -539,7 +540,8 @@ IF (HAVE_GETSERVBYNAME_R)
 	IF (CMAKE_SYSTEM_NAME STREQUAL "SunOS")
 		SET (GETSERVBYNAME_R_ARGS 5)
 	ELSEIF (CMAKE_SYSTEM_NAME STREQUAL "AIX" OR
-		CMAKE_SYSTEM_NAME STREQUAL "OpenBSD")
+			CMAKE_SYSTEM_NAME STREQUAL "OpenBSD" OR
+			CMAKE_SYSTEM_NAME MATCHES  "KOS-GNU.*")
 		SET (GETSERVBYNAME_R_ARGS 4)
 	ELSE ()
 		# Probably linux

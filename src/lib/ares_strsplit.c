@@ -11,6 +11,10 @@
  * M.I.T. makes no representations about the suitability of
  * this software for any purpose.  It is provided "as is"
  * without express or implied warranty.
+ *
+ * © 2024 AO Kaspersky Lab
+ * Licensed under the MIT License
+ *
  */
 
 #if defined(__MVS__)
@@ -21,6 +25,9 @@
 #include "ares_strsplit.h"
 #include "ares.h"
 #include "ares_private.h"
+#ifndef WIN32
+#  include <strings.h>
+#endif
 
 static int list_contains(char * const *list, size_t num_elem, const char *str, int insensitive)
 {

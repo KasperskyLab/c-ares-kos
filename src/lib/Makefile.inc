@@ -42,6 +42,7 @@ CSOURCES = ares__close_sockets.c	\
   ares_platform.c			\
   ares_process.c			\
   ares_query.c				\
+  ares_rand.c \
   ares_search.c				\
   ares_send.c				\
   ares_strcasecmp.c			\

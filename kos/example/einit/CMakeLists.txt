@@ -9,7 +9,7 @@ INCLUDE (platform/image)
 INCLUDE (${KL_SDK_ROOT_PATH}/common/build-sd-image.cmake)
 
 # Set the linker and compiler flags.
-project_header_default ("STANDARD_GNU_11:YES" "STRICT_WARNINGS:NO")
+project_header_default ("STANDARD_GNU_17:YES" "EXTRA_STRICT_WARNINGS:YES")
 
 # Define an ENTITIES variable with a list of programs.
 SET (ENTITIES
@@ -24,7 +24,6 @@ SET (SECURITY_PSL_FILE    "src/security.psl.in")
 SET (CONNECTIONS_CFG_FILE "src/init.yaml.in")
 SET (IMAGE_FS             "${CMAKE_BINARY_DIR}/hdd")
 SET (LIBS_PATH            "${IMAGE_FS}/lib")
-SET (RPI4_DISK_IMAGE      "${CMAKE_BINARY_DIR}/rpi4kos.img")
 SET (QEMU_DISK_IMAGE      sdcard0.img)
 SET (QEMU_DEPENDENCIES    ${QEMU_DISK_IMAGE})
 SET (QEMU_FLAGS           "-drive file=${QEMU_DISK_IMAGE},if=sd,format=raw")
@@ -66,6 +65,30 @@ ADD_CUSTOM_TARGET (${QEMU_DISK_IMAGE}
             -img ${QEMU_DISK_IMAGE}
 )
 
+# Create a top-level CMake target named kos-qemu-image which
+# can be used when building a solution image to be started in QEMU.
+build_kos_qemu_image (kos-qemu-image
+    EINIT_ENTITY            EinitQemu
+    CONNECTIONS_CFG         ${CONNECTIONS_CFG_FILE}
+    SECURITY_PSL            ${SECURITY_PSL_FILE}
+    QEMU_FLAGS              "${QEMU_FLAGS}"
+    QEMU_ENV                ${QEMU_ENV}
+    QEMU_DEPENDENCIES       ${QEMU_DEPENDENCIES}
+    PACK_DEPS_COPY_ONLY     ON
+    PACK_DEPS_LIBS_PATH     ${LIBS_PATH}
+    PACK_DEPS_COPY_TARGET   copylibs_qemu
+    IMAGE_FILES             ${ENTITIES}
+)
+
+IF (BOARD STREQUAL "RADXA_ROCK_3A")
+    SET_TARGET_PROPERTIES (${precompiled_vfsVfsSdCardFs}
+        PROPERTIES
+            EXTRA_ENV "\
+                ROOTFS: mmc1,0 / fat32 0
+                VFS_FILESYSTEM_BACKEND: server:kl.VfsSdCardFs"
+    )
+ENDIF ()
+
 # Create a top-level CMake target named kos-image which can be used
 # when building a solution image to be started on the hardware platform.
 build_kos_hw_image (kos-image
@@ -82,23 +105,7 @@ ADD_DEPENDENCIES (kos-image disk_image_fs copylibs_hw)
 
 # Create a top-level CMake target named sd-image which can be used
 # when building an SD card image to be started on the hardware platform.
-SET (BOARD RPI4_BCM2711)
 build_sd_image (sd-image
     KOS_IMAGE_TARGET kos-image
     IMAGE_FS         ${IMAGE_FS}
-)
-
-# Create a top-level CMake target named kos-qemu-image which
-# can be used when building a solution image to be started in QEMU.
-build_kos_qemu_image (kos-qemu-image
-    EINIT_ENTITY            EinitQemu
-    CONNECTIONS_CFG         ${CONNECTIONS_CFG_FILE}
-    SECURITY_PSL            ${SECURITY_PSL_FILE}
-    QEMU_FLAGS              "${QEMU_FLAGS}"
-    QEMU_ENV                ${QEMU_ENV}
-    QEMU_DEPENDENCIES       ${QEMU_DEPENDENCIES}
-    PACK_DEPS_COPY_ONLY     ON
-    PACK_DEPS_LIBS_PATH     ${LIBS_PATH}
-    PACK_DEPS_COPY_TARGET   copylibs_qemu
-    IMAGE_FILES             ${ENTITIES}
 )

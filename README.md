@@ -16,7 +16,7 @@ The full source code is available in the [c-ares release archives](https://c-are
 and in a [git repository](http://github.com/c-ares/c-ares).
 
 For additional details on KasperskyOS, including its limitations and known issues, please refer to the
-[KasperskyOS Community Edition Online Help](https://click.kaspersky.com/?hl=en-us&link=online_help&pid=kos&version=1.2&customization=KCE_community_edition).
+[KasperskyOS Community Edition Online Help](https://click.kaspersky.com/?hl=en-us&link=online_help&pid=kos&version=1.3&customization=KCE&helpid=community_edition).
 
 ## Table of contents
 - [C-ares adaptation for KasperskyOS](#c-ares-adaptation-for-kasperskyos)
@@ -37,11 +37,11 @@ For additional details on KasperskyOS, including its limitations and known issue
 
 ### Prerequisites
 
-1. [Install](https://click.kaspersky.com/?hl=en-us&link=online_help&pid=kos&version=1.2&customization=KCE_sdk_install_and_remove)
+1. [Install](https://click.kaspersky.com/?hl=en-us&link=online_help&pid=kos&version=1.3&customization=KCE&helpid=sdk_install_and_remove)
 KasperskyOS Community Edition SDK. You can download the latest version of the KasperskyOS Community
 Edition for free from [os.kaspersky.com](https://os.kaspersky.com/development/). The minimum required
-version of KasperskyOS Community Edition SDK is 1.2. For more information, see
-[System requirements](https://click.kaspersky.com/?hl=en-us&link=online_help&pid=kos&version=1.2&customization=KCE_system_requirements).
+version of KasperskyOS Community Edition SDK is 1.3. For more information, see
+[System requirements](https://click.kaspersky.com/?hl=en-us&link=online_help&pid=kos&version=1.3&customization=KCE&helpid=system_requirements).
 1. Copy source files to your project directory. The example of KasperskyOS-based solution and tests
 are located in the [`./kos`](kos) directory.
 
@@ -115,12 +115,12 @@ Default value is 300 seconds.
   Path where the results of the test run will be stored. If not specified, the results will be stored
 in the `./kos/build_tests/test_logs` directory.
 
-[⬆ Back to Top](#Table-of-contents)
+[⬆ Back to Top](#table-of-contents)
 
 ## Usage
 
 When you develop a KasperskyOS-based solution, use the
-[recommended structure of project directories](https://click.kaspersky.com/?hl=en-us&link=online_help&pid=kos&version=1.2&customization=KCE_cmake_using_sdk_cmake)
+[recommended structure of project directories](https://click.kaspersky.com/?hl=en-us&link=online_help&pid=kos&version=1.3&customization=KCE&helpid=cmake_using_sdk_cmake)
 to simplify usage of CMake scripts.
 
 To include the c-ares library in your KasperskyOS-based solution, do the following:
@@ -137,7 +137,7 @@ implementing this approach is shown in the file [`./kos/example/resolver/CMakeLi
 This solution uses the dynamic variant of the c-ares library. To build a static variant of the library,
 use the `initialize_platform` command with the `FORCE_STATIC` parameter. For additional details
 regarding this command, please refer to the
-[platform library](https://click.kaspersky.com/?hl=en-us&link=online_help&pid=kos&version=1.2&customization=KCE_cmake_platform_lib).
+[platform library](https://click.kaspersky.com/?hl=en-us&link=online_help&pid=kos&version=1.3&customization=KCE&helpid=cmake_platform_lib).
 
 ### Example
 
@@ -151,8 +151,6 @@ following limitations:
 
 * Unit tests for KasperskyOS are currently only available for QEMU.
 * Only IPv4 tests are compatible with KasperskyOS.
-* `MockChannelTestAI.FamilyV4ServiceName` test is skipped due to the `getservbyname_r` function
-is not supported by KasperskyOS.
 * `MockChannelTest.HostAliasUnreadable` test is skipped due to KasperskyOS incompatibility (open
 file caching).
 
@@ -162,16 +160,30 @@ file caching).
 
 Registered trademarks and endpoint marks are the property of their respective owners.
 
-GoogleTest, Android are trademarks of Google LLC.
+GoogleTest, Android, Dalvik are trademarks of Google LLC.
 
 FreeBSD is a registered trademark of The FreeBSD Foundation.
 
-AIX, IBM, Power PC are trademarks of International Business Machines Corporation, registered in many jurisdictions 
+AFS, AIX, IBM, Power PC are trademarks of International Business Machines Corporation, registered in many jurisdictions 
 worldwide.
+
+Apple, macOS, Mac OS, Xcode, OS X, iPhone are trademarks of Apple Inc.
+
+FreeBSD is a registered trademark of The FreeBSD Foundation.
+
+Intel, Itanium are trademarks of Intel Corporation or its subsidiaries.
+
+Nokia is registered trademark of Nokia Corporation.
+
+IBM, PowerPC, z/OS are trademarks of International Business Machines Corporation, registered in many jurisdictions worldwide.
+
+UNIX is a registered trademark in the United States and other countries, licensed exclusively through X/Open Company Limited.
+
+IOS is a registered trademark of Cisco Systems, Inc. and/or its affiliates in the United States and certain other countries.
 
 Linux is the registered trademark of Linus Torvalds in the U.S. and other countries.
 
-Microsoft Windows, Visual Studio are trademarks of the Microsoft group of companies.
+Microsoft Windows, Visual Studio, Visual C++, Win32, Windows Server, Windows Store are trademarks of the Microsoft group of companies.
 
 MIPS is a trademark or registered trademark of MIPS Technologies, Inc. in the United States and other countries.
 
@@ -188,8 +200,8 @@ for detailed instructions on code contribution.
 
 ## Licensing
 
-This project is licensed under the terms of the MIT license. See [LICENSE.md](LICENSE.md) for more information.
+This project is licensed under the terms of the MIT License. See [LICENSE.md](LICENSE.md) for more information.
 
-[⬆ Back to Top](#Table-of-contents)
+[⬆ Back to Top](#table-of-contents)
 
-© 2024 AO Kaspersky Lab
+© 2025 AO Kaspersky Lab

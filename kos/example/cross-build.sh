@@ -19,9 +19,7 @@ USAGE:
 
 BUILD_TARGET:
     qemu - to build and run the example on QEMU.
-    rpi  - to create a file system image called rpi4kos.img for a bootable SD card.
-           This image can be directly copied onto an SD card using the dd utility,
-           allowing the example to be run on Raspberry Pi.
+    hw   - to create a file system image bootable device for hardware.
 
 OPTIONS:
     -h, --help
@@ -35,7 +33,7 @@ while [ -n "${1}" ]; do
     -h | --help) PrintHelp
         exit 0;;
     qemu) BUILD_TARGET=sim;;
-    rpi) BUILD_TARGET=sd-image;;
+    hw) BUILD_TARGET=sd-image;;
     *) echo "Unknown option -'${1}'."
         PrintHelp
         exit 1;;
@@ -44,7 +42,7 @@ while [ -n "${1}" ]; do
 done
 
 if [ -z "${BUILD_TARGET}" ]; then
-    echo "BUILD_TARGET is not specified. Specify the value: 'qemu' or 'rpi'."
+    echo "BUILD_TARGET is not specified. Specify the value: 'qemu' or 'hw'."
     PrintHelp
     exit 1
 fi
@@ -87,7 +85,7 @@ if [ "${BUILD_WITH_GCC}" == "y" ]; then
 fi
 
 # Build and install c-ares library if it is not installed previously.
-CARES_INSTALL_DIR="${KOS_DIR}/install"
+CARES_INSTALL_DIR="${KOS_DIR}/../install/kos"
 if [ ! -d "${CARES_INSTALL_DIR}" ]; then
     export INSTALL_PREFIX="${CARES_INSTALL_DIR}"
     ${KOS_DIR}/cross-build.sh && rm -rf "${ROOT_DIR}/build"

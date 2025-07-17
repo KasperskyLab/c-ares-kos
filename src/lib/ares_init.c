@@ -13,6 +13,10 @@
  * M.I.T. makes no representations about the suitability of
  * this software for any purpose.  It is provided "as is"
  * without express or implied warranty.
+ *
+ * © 2025 AO Kaspersky Lab
+ * Licensed under the MIT License
+ *
  */
 
 #include "ares_setup.h"
@@ -72,7 +76,6 @@ static int config_nameserver(struct server_state **servers, int *nservers,
 static int set_search(ares_channel channel, const char *str);
 static int set_options(ares_channel channel, const char *str);
 static const char *try_option(const char *p, const char *q, const char *opt);
-static int init_id_key(rc4_key* key,int key_data_len);
 
 static int config_sortlist(struct apattern **sortlist, int *nsort,
                            const char *str);
@@ -149,6 +152,7 @@ int ares_init_options(ares_channel *channelptr, struct ares_options *options,
   channel->sock_funcs = NULL;
   channel->sock_func_cb_data = NULL;
   channel->resolvconf_path = NULL;
+  channel->rand_state = NULL;
 
   channel->last_server = 0;
   channel->last_timeout_processed = (time_t)now.tv_sec;
@@ -202,9 +206,13 @@ int ares_init_options(ares_channel *channelptr, struct ares_options *options,
   /* Generate random key */
 
   if (status == ARES_SUCCESS) {
-    status = init_id_key(&channel->id_key, ARES_ID_KEY_LEN);
+    channel->rand_state = ares__init_rand_state();
+    if (channel->rand_state == NULL) {
+      status = ARES_ENOMEM;
+    }
+
     if (status == ARES_SUCCESS)
-      channel->next_id = ares__generate_new_id(&channel->id_key);
+      channel->next_id = ares__generate_new_id(channel->rand_state);
     else
       DEBUGF(fprintf(stderr, "Error: init_id_key failed: %s\n",
                      ares_strerror(status)));
@@ -224,6 +232,8 @@ done:
         ares_free(channel->lookups);
       if(channel->resolvconf_path)
         ares_free(channel->resolvconf_path);
+      if (channel->rand_state)
+        ares__destroy_rand_state(channel->rand_state);
       ares_free(channel);
       return status;
     }
@@ -2243,6 +2253,8 @@ static int config_sortlist(struct apattern **sortlist, int *nsort,
       q = str;
       while (*q && *q != '/' && *q != ';' && !ISSPACE(*q))
         q++;
+      if (q-str >= 16)
+        return ARES_EBADSTR;
       memcpy(ipbuf, str, q-str);
       ipbuf[q-str] = '\0';
       /* Find the prefix */
@@ -2251,6 +2263,8 @@ static int config_sortlist(struct apattern **sortlist, int *nsort,
           const char *str2 = q+1;
           while (*q && *q != ';' && !ISSPACE(*q))
             q++;
+          if (q-str >= 32)
+            return ARES_EBADSTR;
           memcpy(ipbufpfx, str, q-str);
           ipbufpfx[q-str] = '\0';
           str = str2;
@@ -2493,76 +2507,6 @@ static int sortlist_alloc(struct apattern **sortlist, int *nsort,
   *sortlist = newsort;
   (*nsort)++;
   return 1;
-}
-
-/* initialize an rc4 key. If possible a cryptographically secure random key
-   is generated using a suitable function (for example win32's RtlGenRandom as
-   described in
-   http://blogs.msdn.com/michael_howard/archive/2005/01/14/353379.aspx
-   otherwise the code defaults to cross-platform albeit less secure mechanism
-   using rand
-*/
-static void randomize_key(unsigned char* key,int key_data_len)
-{
-  int randomized = 0;
-  int counter=0;
-#ifdef WIN32
-  BOOLEAN res;
-  if (ares_fpSystemFunction036)
-    {
-      res = (*ares_fpSystemFunction036) (key, key_data_len);
-      if (res)
-        randomized = 1;
-    }
-#else /* !WIN32 */
-#ifdef CARES_RANDOM_FILE
-  FILE *f = fopen(CARES_RANDOM_FILE, "rb");
-  if(f) {
-    setvbuf(f, NULL, _IONBF, 0);
-    counter = aresx_uztosi(fread(key, 1, key_data_len, f));
-    fclose(f);
-  }
-#endif
-#endif /* WIN32 */
-
-  if (!randomized) {
-    for (;counter<key_data_len;counter++)
-      key[counter]=(unsigned char)(rand() % 256);  /* LCOV_EXCL_LINE */
-  }
-}
-
-static int init_id_key(rc4_key* key,int key_data_len)
-{
-  unsigned char index1;
-  unsigned char index2;
-  unsigned char* state;
-  short counter;
-  unsigned char *key_data_ptr = 0;
-
-  key_data_ptr = ares_malloc(key_data_len);
-  if (!key_data_ptr)
-    return ARES_ENOMEM;
-  memset(key_data_ptr, 0, key_data_len);
-
-  state = &key->state[0];
-  for(counter = 0; counter < 256; counter++)
-    /* unnecessary AND but it keeps some compilers happier */
-    state[counter] = (unsigned char)(counter & 0xff);
-  randomize_key(key->state,key_data_len);
-  key->x = 0;
-  key->y = 0;
-  index1 = 0;
-  index2 = 0;
-  for(counter = 0; counter < 256; counter++)
-  {
-    index2 = (unsigned char)((key_data_ptr[index1] + state[counter] +
-                              index2) % 256);
-    ARES_SWAP_BYTE(&state[counter], &state[index2]);
-
-    index1 = (unsigned char)((index1 + 1) % key_data_len);
-  }
-  ares_free(key_data_ptr);
-  return ARES_SUCCESS;
 }
 
 void ares_set_local_ip4(ares_channel channel, unsigned int local_ip)

@@ -12,6 +12,10 @@
  * M.I.T. makes no representations about the suitability of
  * this software for any purpose.  It is provided "as is"
  * without express or implied warranty.
+ *
+ * © 2025 AO Kaspersky Lab
+ * Licensed under the MIT License
+ *
  */
 
 #include "ares_setup.h"
@@ -49,6 +53,14 @@ int ares__read_line(FILE *fp, char **buf, size_t *bufsize)
       if (!fgets(*buf + offset, bytestoread, fp))
         return (offset != 0) ? 0 : (ferror(fp)) ? ARES_EFILE : ARES_EOF;
       len = offset + strlen(*buf + offset);
+
+      /* Probably means there was an embedded NULL as the first character in
+       * the line, throw away line */
+      if (len == 0) {
+        offset = 0;
+        continue;
+      }
+
       if ((*buf)[len - 1] == '\n')
         {
           (*buf)[len - 1] = 0;

@@ -12,7 +12,12 @@
  * M.I.T. makes no representations about the suitability of
  * this software for any purpose.  It is provided "as is"
  * without express or implied warranty.
+ *
+ * © 2025 AO Kaspersky Lab
+ * Licensed under the MIT License
+ *
  */
+
 #include "ares_setup.h"
 
 #ifdef HAVE_GETSERVBYPORT_R
@@ -304,8 +309,13 @@ static char *lookup_service(unsigned short port, int flags,
           sep = getservbyport_r(port, proto, &se, (void *)tmpbuf,
                                 sizeof(tmpbuf));
 #elif GETSERVBYPORT_R_ARGS == 4
+#ifdef __KOS__
+          /* KasperskyOS uses a NetBSD-like implementation */
+          sep = getservbyport_r(port, proto, &se, (void *)tmpbuf);
+#else
           if (getservbyport_r(port, proto, &se, (void *)tmpbuf) != 0)
             sep = NULL;
+#endif
 #else
           /* Lets just hope the OS uses TLS! */
           sep = getservbyport(port, proto);

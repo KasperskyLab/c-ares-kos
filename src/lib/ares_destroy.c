@@ -13,6 +13,10 @@
  * M.I.T. makes no representations about the suitability of
  * this software for any purpose.  It is provided "as is"
  * without express or implied warranty.
+ *
+ * © 2025 AO Kaspersky Lab
+ * Licensed under the MIT License
+ *
  */
 
 #include "ares_setup.h"
@@ -89,6 +93,9 @@ void ares_destroy(ares_channel channel)
 
   if (channel->resolvconf_path)
     ares_free(channel->resolvconf_path);
+
+  if (channel->rand_state)
+    ares__destroy_rand_state(channel->rand_state);
 
   ares_free(channel);
 }

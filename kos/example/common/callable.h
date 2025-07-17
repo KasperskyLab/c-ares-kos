@@ -108,7 +108,7 @@ public:
 
     Handle Get()
     {
-        AddHandler([this](auto& loop){loop.Step();});
+        AddHandler([](auto& loop){loop.Step();});
         return m_callable.GetHandle();
     }
 };
